@@ -1,22 +1,21 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody), typeof(MeshRenderer))]
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private Splitter _splitter;
-
-    private float _splitChance;
+    private float _splitChance = 100f;
     private Rigidbody _rigidbody;
 
     public float SplitChance => _splitChance;
     public Rigidbody Rigidbody => _rigidbody;
 
+    public event UnityAction<Cube> Splitted;
+
     private void Awake()
     {
-        const float StartSplitChance = 100f;
-
-        Init(StartSplitChance);
         _rigidbody = GetComponent<Rigidbody>();
+        GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
     }
 
     private void OnMouseUpAsButton()
@@ -27,9 +26,10 @@ public class Cube : MonoBehaviour
 
     public void Init(float splitChance)
     {
-        _splitChance = splitChance;
+        const int ScaleReduction = 2;
 
-        GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
+        _splitChance = splitChance;
+        transform.localScale /= ScaleReduction;
     }
 
     private void TrySplit()
@@ -40,10 +40,10 @@ public class Cube : MonoBehaviour
 
         int randomSplitChance = Random.Range(MinSplitChance, MaxSplitChance);
 
-        if (randomSplitChance <= _splitChance)
+        if (randomSplitChance < _splitChance)
         {
             _splitChance /= ReductionSplitChance;
-            _splitter.SplitCube(this);
+            Splitted?.Invoke(this);
         }
     }
 }

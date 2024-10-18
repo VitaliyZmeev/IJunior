@@ -1,38 +1,51 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(Exploser))]
 public class Splitter : MonoBehaviour
 {
-    private Exploser _exploser;
+    [SerializeField] private Cube _cubePrefab;
 
-    private void Start()
+    public event UnityAction<Transform, List<Rigidbody>> CubeSplitted;
+
+    private void Awake()
     {
-        _exploser = GetComponent<Exploser>();
+        const int StartCubeCount = 4;
+
+        for (int i = 0; i < StartCubeCount; i++)
+        {
+            Cube cubePart = CreateCubePart(_cubePrefab);
+        }
     }
 
-    public void SplitCube(Cube cube)
+    private void SplitCube(Cube cube)
     {
+        cube.Splitted -= SplitCube;
         List<Rigidbody> explosiveRigidbodies = new List<Rigidbody>();
 
         for (int i = 0; i < GetRandomCountParts(); i++)
         {
-            const int ScaleReduction = 2;
-
-            Cube cubePart = Instantiate(cube);
-            cubePart.transform.localScale /= ScaleReduction;
-            cubePart.Init(cube.SplitChance);
+            Cube cubePart = CreateCubePart(cube);
             explosiveRigidbodies.Add(cubePart.Rigidbody);
         }
 
-        _exploser.Explode(cube.transform, explosiveRigidbodies);
+        CubeSplitted?.Invoke(cube.transform, explosiveRigidbodies);
     }
 
     private int GetRandomCountParts()
     {
         const int MinCountParts = 2;
-        const int MaxCountParts = 7;
+        const int MaxCountParts = 6;
 
-        return Random.Range(MinCountParts, MaxCountParts);
+        return Random.Range(MinCountParts, MaxCountParts + 1);
+    }
+
+    private Cube CreateCubePart(Cube cube)
+    {
+        Cube cubePart = Instantiate(cube);
+        cubePart.Init(cube.SplitChance);
+        cubePart.Splitted += SplitCube;
+
+        return cubePart;
     }
 }
