@@ -11,6 +11,7 @@ public class Cube : MonoBehaviour
     public Rigidbody Rigidbody => _rigidbody;
 
     public event UnityAction<Cube> Splitted;
+    public event UnityAction<Cube> Destroyed;
 
     private void Awake()
     {
@@ -20,7 +21,18 @@ public class Cube : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        TrySplit();
+        if (TrySplit())
+        {
+            int splitChanceReduction = 2;
+
+            _splitChance /= splitChanceReduction;
+            Splitted?.Invoke(this);
+        }
+        else
+        {
+            Destroyed?.Invoke(this);
+        }
+
         Destroy(gameObject);
     }
 
@@ -32,18 +44,13 @@ public class Cube : MonoBehaviour
         transform.localScale /= scaleReduction;
     }
 
-    private void TrySplit()
+    private bool TrySplit()
     {
         int minSplitChance = 0;
         int maxSplitChance = 100;
-        int splitChanceReduction = 2;
 
         int randomSplitChance = Random.Range(minSplitChance, maxSplitChance);
 
-        if (randomSplitChance < _splitChance)
-        {
-            _splitChance /= splitChanceReduction;
-            Splitted?.Invoke(this);
-        }
+        return randomSplitChance < _splitChance;
     }
 }

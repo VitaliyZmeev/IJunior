@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Splitter : MonoBehaviour
 {
     [SerializeField] private Cube _cubePrefab;
-
-    public event UnityAction<Transform, List<Rigidbody>> CubeSplitted;
+    [SerializeField] private Exploser _exploser;
 
     private void Awake()
     {
@@ -27,9 +25,10 @@ public class Splitter : MonoBehaviour
         {
             Cube cubePart = CreateCubePart(cube);
             explosiveRigidbodies.Add(cubePart.Rigidbody);
+            cubePart.Destroyed += _exploser.Explode;
         }
 
-        CubeSplitted?.Invoke(cube.transform, explosiveRigidbodies);
+        _exploser.ExplodeRigidbodies(cube.transform, explosiveRigidbodies);
     }
 
     private int GetRandomCountParts()

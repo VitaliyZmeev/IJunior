@@ -3,26 +3,49 @@ using UnityEngine;
 
 public class Exploser : MonoBehaviour
 {
-    [SerializeField] private Splitter _splitter;
     [SerializeField] private float _explosionRadius = 20f;
     [SerializeField] private float _explosionForce = 700f;
 
-    private void OnEnable()
-    {
-        _splitter.CubeSplitted += Explode;
-    }
-
-    private void OnDisable()
-    {
-        _splitter.CubeSplitted -= Explode;
-    }
-
-    private void Explode(Transform explosivePoint, List<Rigidbody> rigidbodies)
+    public void ExplodeRigidbodies(Transform explosivePoint, List<Rigidbody> rigidbodies)
     {
         foreach (Rigidbody explodableObject in rigidbodies)
         {
             explodableObject.AddExplosionForce(_explosionForce,
                 explosivePoint.position, _explosionRadius);
         }
+    }
+
+    public void Explode(Cube cube)
+    {
+        cube.Destroyed -= Explode;
+
+        Vector3 explosivePoint = cube.transform.position;
+        float cubeSize = cube.transform.localScale.magnitude;
+
+        float explosionRadius = _explosionRadius / cubeSize;
+        float explosionForce = _explosionForce / cubeSize;
+
+        foreach (Rigidbody explodableObject in GetExplodableObjects(explosivePoint))
+        {
+            explodableObject.AddExplosionForce(explosionForce,
+                explosivePoint, _explosionRadius);
+        }
+    }
+
+    private IEnumerable<Rigidbody> GetExplodableObjects(Vector3 explosivePoint)
+    {
+        Collider[] hits = Physics.OverlapSphere(explosivePoint, _explosionRadius);
+
+        List<Rigidbody> rigidbodies = new();
+
+        foreach (Collider hit in hits)
+        {
+            if (hit.attachedRigidbody != null)
+            {
+                rigidbodies.Add(hit.attachedRigidbody);
+            }
+        }
+
+        return rigidbodies;
     }
 }
