@@ -26,23 +26,23 @@ public class Cube : MonoBehaviour
 
     public void Init(float splitChance)
     {
-        const int ScaleReduction = 2;
+        int scaleReduction = 2;
 
         _splitChance = splitChance;
-        transform.localScale /= ScaleReduction;
+        transform.localScale /= scaleReduction;
     }
 
     private void TrySplit()
     {
-        const int MinSplitChance = 0;
-        const int MaxSplitChance = 100;
-        const int ReductionSplitChance = 2;
+        int minSplitChance = 0;
+        int maxSplitChance = 100;
+        int splitChanceReduction = 2;
 
-        int randomSplitChance = Random.Range(MinSplitChance, MaxSplitChance);
+        int randomSplitChance = Random.Range(minSplitChance, maxSplitChance);
 
         if (randomSplitChance < _splitChance)
         {
-            _splitChance /= ReductionSplitChance;
+            _splitChance /= splitChanceReduction;
             Splitted?.Invoke(this);
         }
     }

@@ -10,9 +10,9 @@ public class Splitter : MonoBehaviour
 
     private void Awake()
     {
-        const int StartCubeCount = 4;
+        int startCubeCount = 4;
 
-        for (int i = 0; i < StartCubeCount; i++)
+        for (int i = 0; i < startCubeCount; i++)
         {
             Cube cubePart = CreateCubePart(_cubePrefab);
         }
@@ -34,10 +34,10 @@ public class Splitter : MonoBehaviour
 
     private int GetRandomCountParts()
     {
-        const int MinCountParts = 2;
-        const int MaxCountParts = 6;
+        int minCountParts = 2;
+        int maxCountParts = 6;
 
-        return Random.Range(MinCountParts, MaxCountParts + 1);
+        return Random.Range(minCountParts, maxCountParts + 1);
     }
 
     private Cube CreateCubePart(Cube cube)
