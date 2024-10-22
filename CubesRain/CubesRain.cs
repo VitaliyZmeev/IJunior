@@ -11,8 +11,8 @@ public class CubesRain : MonoBehaviour
     {
         _objectPool = new ObjectPool<Cube>(
             createFunc: () => Instantiate(_cubePrefab, transform),
-            actionOnGet: (obj) => ActionOnGet(obj),
-            actionOnRelease: (obj) => ActionOnRelease(obj),
+            actionOnGet: (obj) => GetCube(obj),
+            actionOnRelease: (obj) => ReleaseCube(obj),
             actionOnDestroy: (obj) => Destroy(obj));
     }
 
@@ -27,7 +27,7 @@ public class CubesRain : MonoBehaviour
         _objectPool.Get();
     }
 
-    private void ActionOnGet(Cube cube)
+    private void GetCube(Cube cube)
     {
         cube.Init(GetRandomPosition());
         cube.Destroyed += _objectPool.Release;
@@ -42,7 +42,7 @@ public class CubesRain : MonoBehaviour
             maxPosition + 1) + transform.position;
     }
 
-    private void ActionOnRelease(Cube cube)
+    private void ReleaseCube(Cube cube)
     {
         cube.Destroyed -= _objectPool.Release;
     }
