@@ -5,29 +5,26 @@ namespace EnemyGeneration
 {
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private float _speed = 2f;
-
-        private Transform _target;
+        [SerializeField] private float _speed = 10f;
+        [SerializeField] private float _lifetime = 5f;
 
         public event Action<Enemy> Destroyed;
 
         private void Update()
         {
-            if (_target == null)
-                return;
-
-            if (transform.position == _target.position)
-                Destroyed?.Invoke(this);
-
-            transform.position = Vector3.MoveTowards(transform.position,
-                _target.position, _speed * Time.deltaTime);
+            transform.Translate(_speed * Time.deltaTime * Vector3.forward);
         }
 
-        public void Init(Transform target, Transform spawnPoint)
+        public void Init(Vector3 position, Vector3 direction)
         {
-            _target = target;
-            transform.position = spawnPoint.position;
-            transform.LookAt(_target);
+            transform.position = position;
+            transform.Rotate(direction);
+            Invoke(nameof(DestroySelf), _lifetime);
+        }
+
+        private void DestroySelf()
+        {
+            Destroyed?.Invoke(this);
         }
     }
 }

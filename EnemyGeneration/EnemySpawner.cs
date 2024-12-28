@@ -7,19 +7,18 @@ namespace EnemyGeneration
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private float _spawnDuration = 2f;
+        [SerializeField] private SpawnPoint[] _spawnPoints;
         [SerializeField] private Enemy _enemyPrefab;
 
-        private SpawnPoint[] _spawnPoints;
-        private TargetPoint _targetPoint;
         private ObjectPool<Enemy> _enemyPool;
 
         private void Awake()
         {
-            _spawnPoints = GetComponentsInChildren<SpawnPoint>();
-            _targetPoint = GetComponentInChildren<TargetPoint>();
-            _enemyPool = new ObjectPool<Enemy>(createFunc: () => Instantiate(_enemyPrefab, transform),
-                actionOnGet: (enemy) => GetEnemy(enemy), actionOnRelease: (enemy) =>
-                ReleaseEnemy(enemy), actionOnDestroy: (enemy) => Destroy(enemy));
+            _enemyPool = new ObjectPool<Enemy>(
+                createFunc: () => Instantiate(_enemyPrefab, transform),
+                actionOnGet: (enemy) => GetEnemy(enemy),
+                actionOnRelease: (enemy) => ReleaseEnemy(enemy),
+                actionOnDestroy: (enemy) => Destroy(enemy.gameObject));
         }
 
         private void Start()
@@ -42,15 +41,23 @@ namespace EnemyGeneration
         private void GetEnemy(Enemy enemy)
         {
             enemy.gameObject.SetActive(true);
-            enemy.Init(_targetPoint.transform, GetRandomSpawnPoint());
             enemy.Destroyed += _enemyPool.Release;
+            enemy.Init(GetRandomPosition(), GetRandomDirection());
         }
 
-        private Transform GetRandomSpawnPoint()
+        private Vector3 GetRandomPosition()
         {
             int spawnPointIndex = Random.Range(0, _spawnPoints.Length);
 
-            return _spawnPoints[spawnPointIndex].transform;
+            return _spawnPoints[spawnPointIndex].transform.position;
+        }
+
+        private Vector3 GetRandomDirection()
+        {
+            int minRotation = 0;
+            int maxRotation = 360;
+
+            return new Vector3(0f, Random.Range(minRotation, maxRotation + 1), 0f);
         }
 
         private void ReleaseEnemy(Enemy enemy)
