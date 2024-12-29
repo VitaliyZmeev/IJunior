@@ -40,9 +40,8 @@ namespace EnemyGeneration
 
         private void GetEnemy(Enemy enemy)
         {
-            enemy.gameObject.SetActive(true);
-            enemy.Destroyed += _enemyPool.Release;
             enemy.Init(GetRandomPosition(), GetRandomDirection());
+            enemy.Destroyed += _enemyPool.Release;
         }
 
         private Vector3 GetRandomPosition()
@@ -54,15 +53,15 @@ namespace EnemyGeneration
 
         private Vector3 GetRandomDirection()
         {
-            int minRotation = 0;
-            int maxRotation = 360;
+            float minDirection = -1f;
+            float maxDirection = 1f;
 
-            return new Vector3(0f, Random.Range(minRotation, maxRotation + 1), 0f);
+            return new Vector3(Random.Range(minDirection, maxDirection), 0f,
+                Random.Range(minDirection, maxDirection)).normalized;
         }
 
         private void ReleaseEnemy(Enemy enemy)
         {
-            enemy.gameObject.SetActive(false);
             enemy.Destroyed -= _enemyPool.Release;
         }
     }
