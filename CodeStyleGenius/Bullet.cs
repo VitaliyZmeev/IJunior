@@ -1,28 +1,29 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-public class Bullet : MonoBehaviour
+namespace CodeStyleGenius
 {
-    [SerializeField] private float _speed;
-
-    private Vector3 _direction;
-    private Rigidbody _rigidbody;
-
-    private void Awake()
+    [RequireComponent(typeof(Rigidbody))]
+    public class Bullet : MonoBehaviour
     {
-        _rigidbody = GetComponent<Rigidbody>();
-    }
+        [SerializeField] private float _speed;
 
-    private void FixedUpdate()
-    {
-        transform.forward = _direction;
+        private Vector3 _direction;
+        private Rigidbody _rigidbody;
 
-        Vector3 targetPosition = transform.position + (_speed * Time.fixedDeltaTime * _direction);
-        _rigidbody.MovePosition(targetPosition);
-    }
+        private void Awake()
+        {
+            _rigidbody = GetComponent<Rigidbody>();
+        }
 
-    public void Init(Vector3 direction)
-    {
-        _direction = direction;
+        private void FixedUpdate()
+        {
+            transform.forward = _direction;
+            _rigidbody.velocity = _speed * Time.fixedDeltaTime * _direction;
+        }
+
+        public void Init(Vector3 direction)
+        {
+            _direction = direction;
+        }
     }
 }

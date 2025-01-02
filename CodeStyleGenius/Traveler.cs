@@ -1,21 +1,24 @@
 using UnityEngine;
 
-public class Traveler : MonoBehaviour
+namespace CodeStyleGenius
 {
-    [SerializeField] private float _speed;
-    [SerializeField] private Map _map;
-
-    private Transform CurrentPlace => _map.CurrentPlace;
-
-    private void Update()
+    public class Traveler : MonoBehaviour
     {
-        transform.position = Vector3.MoveTowards(transform.position,
-            CurrentPlace.position, _speed * Time.deltaTime);
+        [SerializeField] private float _speed;
+        [SerializeField] private Map _map;
 
-        if (transform.position == CurrentPlace.position)
+        private Transform CurrentPlace => _map.CurrentPlace;
+
+        private void Update()
         {
-            _map.SetNextPlace();
-            transform.LookAt(CurrentPlace);
+            transform.position = Vector3.MoveTowards(transform.position,
+                CurrentPlace.position, _speed * Time.deltaTime);
+
+            if (transform.position == CurrentPlace.position)
+            {
+                _map.SetNextPlace();
+                transform.LookAt(CurrentPlace);
+            }
         }
     }
 }

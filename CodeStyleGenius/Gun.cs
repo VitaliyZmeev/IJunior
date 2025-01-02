@@ -1,29 +1,32 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-public class Gun : MonoBehaviour
+namespace CodeStyleGenius
 {
-    [SerializeField] private float _cooldownDuration;
-    [SerializeField] private Transform _target;
-    [SerializeField] private Bullet _bulletPrefab;
-
-    private void Start()
+    [RequireComponent(typeof(Rigidbody))]
+    public class Gun : MonoBehaviour
     {
-        StartCoroutine(Shoot());
-    }
+        [SerializeField] private float _cooldownDuration;
+        [SerializeField] private Transform _target;
+        [SerializeField] private Bullet _bulletPrefab;
 
-    private IEnumerator Shoot()
-    {
-        WaitForSeconds wait = new WaitForSeconds(_cooldownDuration);
-
-        while (enabled)
+        private void Start()
         {
-            Vector3 shootDirection = (_target.position - transform.position).normalized;
-            Bullet bullet = Instantiate(_bulletPrefab, transform.position + shootDirection, Quaternion.identity);
-            bullet.Init(shootDirection);
+            StartCoroutine(Shoot());
+        }
 
-            yield return wait;
+        private IEnumerator Shoot()
+        {
+            WaitForSeconds wait = new WaitForSeconds(_cooldownDuration);
+
+            while (enabled)
+            {
+                Vector3 shootDirection = (_target.position - transform.position).normalized;
+                Bullet bullet = Instantiate(_bulletPrefab, transform.position + shootDirection, Quaternion.identity);
+                bullet.Init(shootDirection);
+
+                yield return wait;
+            }
         }
     }
 }

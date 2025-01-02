@@ -1,29 +1,27 @@
 using UnityEngine;
 
-public class Map : MonoBehaviour
+namespace CodeStyleGenius
 {
-    private int _currentPlaceIndex;
-    private Transform[] _places;
-
-    public Transform CurrentPlace => _places[_currentPlaceIndex];
-
-    private void Awake()
+    public class Map : MonoBehaviour
     {
-        _places = new Transform[transform.childCount];
+        private int _currentPlaceIndex;
+        private Transform[] _places;
 
-        for (int i = 0; i < _places.Length; i++)
+        public Transform CurrentPlace => _places[_currentPlaceIndex];
+
+        private void Awake()
         {
-            _places[i] = transform.GetChild(i);
+            _places = new Transform[transform.childCount];
+
+            for (int i = 0; i < _places.Length; i++)
+            {
+                _places[i] = transform.GetChild(i);
+            }
         }
-    }
 
-    public void SetNextPlace()
-    {
-        _currentPlaceIndex++;
-
-        if (_currentPlaceIndex == _places.Length)
+        public void SetNextPlace()
         {
-            _currentPlaceIndex = 0;
+            _currentPlaceIndex = ++_currentPlaceIndex % _places.Length;
         }
     }
 }
