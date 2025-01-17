@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Platformer2d
@@ -5,13 +6,10 @@ namespace Platformer2d
     public class CoinSpawner : MonoBehaviour
     {
         [SerializeField] private Coin _coinPrefab;
-        [SerializeField] private CoinCounter _coinCounter;
         [SerializeField] private Transform[] _targetPoints;
 
-        private void Awake()
-        {
-            _coinCounter.Init(_targetPoints.Length);
-        }
+        public event Action CoinCollected;
+        public event Action<int> CoinsSpawned;
 
         private void Start()
         {
@@ -32,18 +30,23 @@ namespace Platformer2d
 
         private void Spawn()
         {
+            int spawnedCoins = 0;
+
             foreach (Transform spawnPoint in _targetPoints)
             {
                 Coin spawnedCoin = Instantiate(_coinPrefab, spawnPoint.transform.position,
                     Quaternion.identity, transform);
                 spawnedCoin.Collected += OnCoinCollected;
+                spawnedCoins++;
             }
+
+            CoinsSpawned?.Invoke(spawnedCoins);
         }
 
-        private void OnCoinCollected(Coin fruit)
+        private void OnCoinCollected(Coin coin)
         {
-            _coinCounter.AddCoin();
-            fruit.Collected -= OnCoinCollected;
+            coin.Collected -= OnCoinCollected;
+            CoinCollected?.Invoke();
         }
     }
 }

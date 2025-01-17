@@ -1,29 +1,40 @@
-using TMPro;
+using System;
 using UnityEngine;
 
 namespace Platformer2d
 {
     public class CoinCounter : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _currentCountView;
-        [SerializeField] private TextMeshProUGUI _maxCountView;
+        [SerializeField] private CoinSpawner _coinSpawner;
 
-        private int _count;
+        private int _coins;
+        private int _spawnedCoins;
 
-        public void Init(int maxCount)
+        public event Action<int> CoinsChanged;
+        public event Action<int> SpawnedCoinsChanged;
+
+        private void OnEnable()
         {
-            _maxCountView.text = maxCount.ToString();
+            _coinSpawner.CoinCollected += AddCoin;
+            _coinSpawner.CoinsSpawned += SetSpawnedCoins;
         }
 
-        public void AddCoin()
+        private void OnDisable()
         {
-            _count++;
-            ShowCount();
+            _coinSpawner.CoinCollected -= AddCoin;
+            _coinSpawner.CoinsSpawned -= SetSpawnedCoins;
         }
 
-        private void ShowCount()
+        private void AddCoin()
         {
-            _currentCountView.text = _count.ToString();
+            _coins++;
+            CoinsChanged?.Invoke(_coins);
+        }
+
+        private void SetSpawnedCoins(int coins)
+        {
+            _spawnedCoins = coins;
+            SpawnedCoinsChanged?.Invoke(_spawnedCoins);
         }
     }
 }

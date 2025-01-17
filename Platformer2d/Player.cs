@@ -8,7 +8,7 @@ namespace Platformer2d
     [RequireComponent(typeof(PlayerCollider))]
     public class Player : MonoBehaviour
     {
-        const string MoveAnimatorParameter = "Move";
+        private const string MoveAnimatorParameter = "Move";
 
         [SerializeField] private float _speed;
         [SerializeField] private float _jumpForce;
