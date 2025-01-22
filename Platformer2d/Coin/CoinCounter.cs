@@ -6,35 +6,34 @@ namespace Platformer2d
     public class CoinCounter : MonoBehaviour
     {
         [SerializeField] private CoinSpawner _coinSpawner;
+        [SerializeField] private CoinCollector _coinCollector;
 
         private int _coins;
-        private int _spawnedCoins;
+        private int _maxCoins;
+
+        public int MaxCoins => _maxCoins;
 
         public event Action<int> CoinsChanged;
-        public event Action<int> SpawnedCoinsChanged;
+
+        private void Awake()
+        {
+            _maxCoins = _coinSpawner.MaxCoins;
+        }
 
         private void OnEnable()
         {
-            _coinSpawner.CoinCollected += AddCoin;
-            _coinSpawner.CoinsSpawned += SetSpawnedCoins;
+            _coinCollector.CoinCollected += AddCoin;
         }
 
         private void OnDisable()
         {
-            _coinSpawner.CoinCollected -= AddCoin;
-            _coinSpawner.CoinsSpawned -= SetSpawnedCoins;
+            _coinCollector.CoinCollected -= AddCoin;
         }
 
         private void AddCoin()
         {
             _coins++;
             CoinsChanged?.Invoke(_coins);
-        }
-
-        private void SetSpawnedCoins(int coins)
-        {
-            _spawnedCoins = coins;
-            SpawnedCoinsChanged?.Invoke(_spawnedCoins);
         }
     }
 }

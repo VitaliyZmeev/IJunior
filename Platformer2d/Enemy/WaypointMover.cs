@@ -4,21 +4,11 @@ namespace Platformer2d
 {
     public class WaypointMover : MonoBehaviour
     {
-        [SerializeField] private Transform _route;
         [SerializeField] private float _speed;
+        [SerializeField] private Transform _route;
+        [SerializeField] private Transform[] _waypoints;
 
-        private Transform[] _waypoints;
         private int _currentWaypoint;
-
-        private void Start()
-        {
-            _waypoints = new Transform[_route.childCount];
-
-            for (int i = 0; i < _route.childCount; i++)
-            {
-                _waypoints[i] = _route.GetChild(i);
-            }
-        }
 
         private void Update()
         {
@@ -30,5 +20,17 @@ namespace Platformer2d
             transform.position = Vector3.MoveTowards(transform.position,
                 _waypoints[_currentWaypoint].position, _speed * Time.deltaTime);
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Refresh Child Array")]
+        private void RefreshChildArray()
+        {
+            int pointCount = _route.childCount;
+            _waypoints = new Transform[pointCount];
+
+            for (int i = 0; i < pointCount; i++)
+                _waypoints[i] = _route.GetChild(i);
+        }
+#endif
     }
 }
